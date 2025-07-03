@@ -103,6 +103,9 @@
 
                 <div class="wine-details">
                     <h3>{{ wine.WineName|default:"Unknown Wine" }}</h3>
+                    {% if wine.Winery %}
+                        <p><strong>Winery:</strong> {{ wine.Winery }}</p>
+                    {% endif %}
                     <p><strong>Type:</strong> {{ wine.Type|default:"N/A" }}</p>
                     <p><strong>Grapes:</strong> {{ wine.Grapes_list|default:"N/A" }}</p>
                     <p><strong>Body:</strong> {{ wine.Body|default:"N/A" }}</p>

@@ -246,6 +246,9 @@
                     {% for wine in recommendations %}
                         <div class="wine-card">
                             <h4>{{ wine.WineName|default:"Unknown Wine" }}</h4>
+                            {% if wine.Winery %}
+                                <p><strong>Winery:</strong> {{ wine.Winery }}</p>
+                            {% endif %}
                             <p><strong>Type:</strong> {{ wine.Type|default:"N/A" }}</p>
                             <p><strong>Grapes:</strong> {{ wine.Grapes|default:"N/A" }}</p>
                             <p><strong>Country:</strong> {{ wine.Country|default:"N/A" }}</p>
