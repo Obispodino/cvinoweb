@@ -2,15 +2,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scanner</title>
+    <title>Wine Label Scanner - CvalVino</title>
     <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+    <style>
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .scanner-section {
+            background-color: #F4A6B1;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+            color: #722F37;
+        }
+        .scanner-section h3 {
+            color: #722F37;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .file-input {
+            position: absolute;
+            left: -9999px;
+        }
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #722F37;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+        .file-input-label:hover {
+            background-color: #8b3a42;
+        }
+        .upload-button {
+            background-color: #c24f5d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+        .upload-button:hover {
+            background-color: #eb919c;
+        }
+        .upload-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #c24f5d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .back-button:hover {
+            background-color: #eb919c;
+        }
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+        }
+        .preview-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Scan a wine label</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="label">
-        <button type="submit">Scan</button>
-    </form>
+    <div class="main-container">
+        <h1>🍷 Wine Label Scanner</h1>
+
+        <a href="{% url 'home' %}" class="back-button">← Back to Home</a>
+
+        {% if error %}
+            <div class="error-message">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="scanner-section">
+            <h3>📸 Upload a clear photo of a wine label</h3>
+            <p>Upload a clear image of a wine label to extract information and find similar wines.</p>
+
+            <form method="post" enctype="multipart/form-data" id="scanner-form">
+                {% csrf_token %}
+                <div class="file-input-wrapper">
+                    <input type="file" id="label" name="label" accept="image/*" class="file-input" onchange="previewImage(this)" required>
+                    <label for="label" class="file-input-label">Choose Image</label>
+                </div>
+                <button type="submit" class="upload-button" id="upload-btn" disabled>Scan Wine Label</button>
+
+                <div id="preview-container" style="margin-top: 20px;"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(input) {
+            const uploadBtn = document.getElementById('upload-btn');
+            const previewContainer = document.getElementById('preview-container');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContainer.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" class="preview-image">
+                        <p style="font-size: 14px; margin-top: 10px; color: #722F37;">Ready to scan this wine label</p>
+                    `;
+                };
+                reader.readAsDataURL(input.files[0]);
+                uploadBtn.disabled = false;
+            } else {
+                previewContainer.innerHTML = '';
+                uploadBtn.disabled = true;
+            }
+        }
+    </script>
 </body>
 </html>

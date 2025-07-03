@@ -2,50 +2,355 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Wine Recommendation</title>
+    <title>Wine Recommendation by Characteristics - CvalVino</title>
     <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+    <style>
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .recommendation-section {
+            background-color: #F4A6B1;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+            color: #722F37;
+        }
+        .recommendation-section h3 {
+            color: #722F37;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            color: #722F37;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .form-group select,
+        .form-group input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #722F37;
+            background-color: white;
+            color: #722F37;
+            font-size: 16px;
+        }
+        .submit-button {
+            background-color: #c24f5d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .submit-button:hover {
+            background-color: #eb919c;
+            transform: scale(1.02);
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #c24f5d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .back-button:hover {
+            background-color: #eb919c;
+        }
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+        }
+    </style>
 </head>
 <body>
-    <h1>Get Wine Recommendation by Characteristics</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="wine_type">Wine Type:</label>
-        <select id="wine_type" name="wine_type">
-            <option value="Red">Red</option>
-            <option value="White">White</option>
-            <option value="Rosé">Rosé</option>
-        </select>
-        <br>
-        <label for="grape_varieties">Grape Varieties (comma-separated):</label>
-        <input type="text" id="grape_varieties" name="grape_varieties">
-        <br>
-        <label for="body">Body:</label>
-        <select id="body" name="body">
-            <option value="Light-bodied">Light-bodied</option>
-            <option value="Medium-bodied">Medium-bodied</option>
-            <option value="Full-bodied" selected>Full-bodied</option>
-        </select>
-        <br>
-        <label for="abv">ABV:</label>
-        <input type="number" id="abv" name="abv" step="0.1" value="12.0">
-        <br>
-        <label for="acidity">Acidity:</label>
-        <select id="acidity" name="acidity">
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-        </select>
-        <br>
-        <label for="country">Country:</label>
-        <input type="text" id="country" name="country">
-        <br>
-        <label for="region_name">Region:</label>
-        <input type="text" id="region_name" name="region_name">
-        <br>
-        <label for="n_recommendations">Number of recommendations:</label>
-        <input type="number" id="n_recommendations" name="n_recommendations" value="5">
-        <br>
-        <button type="submit">Get Recommendations</button>
-    </form>
+    <div class="main-container">
+        <h1>🍷 Get Wine Recommendation by Characteristics</h1>
+
+        <a href="{% url 'home' %}" class="back-button">← Back to Home</a>
+
+        {% if error %}
+            <div class="error-message">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="recommendation-section">
+            <h3>🔍 Find Your Perfect Wine</h3>
+            <p>Select wine characteristics to get personalized recommendations from our extensive wine database.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="wine_type">Wine Type:</label>
+                        <select id="wine_type" name="wine_type">
+                            <option value="">-- Select wine type --</option>
+                            <option value="Red">🍷 Red</option>
+                            <option value="White">🥂 White</option>
+                            <option value="Rosé">🌹 Rosé</option>
+                            <option value="Sparkling">🍾 Sparkling</option>
+                            <option value="Dessert">🍯 Dessert</option>
+                            <option value="Fortified">🥃 Fortified</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grape_varieties">Grape Varieties:</label>
+                        <select id="grape_varieties" name="grape_varieties" multiple>
+                            <option value="">-- Select grape varieties --</option>
+                            <optgroup label="Red Grapes">
+                                <option value="Cabernet Sauvignon">Cabernet Sauvignon</option>
+                                <option value="Merlot">Merlot</option>
+                                <option value="Pinot Noir">Pinot Noir</option>
+                                <option value="Syrah">Syrah</option>
+                                <option value="Shiraz">Shiraz</option>
+                                <option value="Malbec">Malbec</option>
+                                <option value="Tempranillo">Tempranillo</option>
+                                <option value="Sangiovese">Sangiovese</option>
+                                <option value="Grenache">Grenache</option>
+                                <option value="Barbera">Barbera</option>
+                                <option value="Nebbiolo">Nebbiolo</option>
+                                <option value="Zinfandel">Zinfandel</option>
+                            </optgroup>
+                            <optgroup label="White Grapes">
+                                <option value="Chardonnay">Chardonnay</option>
+                                <option value="Sauvignon Blanc">Sauvignon Blanc</option>
+                                <option value="Riesling">Riesling</option>
+                                <option value="Pinot Grigio">Pinot Grigio</option>
+                                <option value="Pinot Gris">Pinot Gris</option>
+                                <option value="Gewürztraminer">Gewürztraminer</option>
+                                <option value="Albariño">Albariño</option>
+                                <option value="Viognier">Viognier</option>
+                                <option value="Chenin Blanc">Chenin Blanc</option>
+                                <option value="Moscato">Moscato</option>
+                            </optgroup>
+                        </select>
+                        <small style="color: #722F37; margin-top: 5px;">Hold Ctrl/Cmd to select multiple varieties</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="body">Body:</label>
+                        <select id="body" name="body">
+                            <option value="">-- Select body --</option>
+                            <option value="Very light-bodied">Very Light-bodied</option>
+                            <option value="Light-bodied">Light-bodied</option>
+                            <option value="Medium-bodied" selected>Medium-bodied</option>
+                            <option value="Full-bodied">Full-bodied</option>
+                            <option value="Very full-bodied">Very Full-bodied</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="abv">ABV (%):</label>
+                        <input type="number" id="abv" name="abv" step="0.1" min="0" max="20" value="13.5" placeholder="e.g., 13.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="acidity">Acidity:</label>
+                        <select id="acidity" name="acidity">
+                            <option value="">-- Select acidity --</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <select id="country" name="country">
+                            <option value="">-- Select country --</option>
+                            <option value="France">🇫🇷 France</option>
+                            <option value="Italy">🇮🇹 Italy</option>
+                            <option value="Spain">🇪🇸 Spain</option>
+                            <option value="United States">🇺🇸 United States</option>
+                            <option value="Australia">🇦🇺 Australia</option>
+                            <option value="Argentina">🇦🇷 Argentina</option>
+                            <option value="Chile">🇨🇱 Chile</option>
+                            <option value="Germany">🇩🇪 Germany</option>
+                            <option value="Portugal">🇵🇹 Portugal</option>
+                            <option value="South Africa">🇿🇦 South Africa</option>
+                            <option value="New Zealand">🇳🇿 New Zealand</option>
+                            <option value="Austria">🇦🇹 Austria</option>
+                            <option value="Greece">🇬🇷 Greece</option>
+                            <option value="Hungary">🇭🇺 Hungary</option>
+                            <option value="Romania">🇷🇴 Romania</option>
+                            <option value="Bulgaria">🇧🇬 Bulgaria</option>
+                            <option value="Croatia">🇭🇷 Croatia</option>
+                            <option value="Slovenia">🇸🇮 Slovenia</option>
+                            <option value="Brazil">🇧🇷 Brazil</option>
+                            <option value="Uruguay">🇺🇾 Uruguay</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="region_name">Region:</label>
+                        <select id="region_name" name="region_name">
+                            <option value="">-- Select region --</option>
+                            <optgroup label="France">
+                                <option value="Bordeaux">Bordeaux</option>
+                                <option value="Burgundy">Burgundy</option>
+                                <option value="Champagne">Champagne</option>
+                                <option value="Loire Valley">Loire Valley</option>
+                                <option value="Rhône Valley">Rhône Valley</option>
+                                <option value="Alsace">Alsace</option>
+                                <option value="Languedoc">Languedoc</option>
+                            </optgroup>
+                            <optgroup label="Italy">
+                                <option value="Tuscany">Tuscany</option>
+                                <option value="Piedmont">Piedmont</option>
+                                <option value="Veneto">Veneto</option>
+                                <option value="Sicily">Sicily</option>
+                                <option value="Umbria">Umbria</option>
+                            </optgroup>
+                            <optgroup label="Spain">
+                                <option value="Rioja">Rioja</option>
+                                <option value="Ribera del Duero">Ribera del Duero</option>
+                                <option value="Priorat">Priorat</option>
+                                <option value="Rías Baixas">Rías Baixas</option>
+                            </optgroup>
+                            <optgroup label="United States">
+                                <option value="Napa Valley">Napa Valley</option>
+                                <option value="Sonoma County">Sonoma County</option>
+                                <option value="Oregon">Oregon</option>
+                                <option value="Washington">Washington</option>
+                            </optgroup>
+                            <optgroup label="Australia">
+                                <option value="Barossa Valley">Barossa Valley</option>
+                                <option value="Hunter Valley">Hunter Valley</option>
+                                <option value="Margaret River">Margaret River</option>
+                            </optgroup>
+                            <optgroup label="Argentina">
+                                <option value="Mendoza">Mendoza</option>
+                                <option value="Salta">Salta</option>
+                            </optgroup>
+                            <optgroup label="Chile">
+                                <option value="Central Valley">Central Valley</option>
+                                <option value="Casablanca Valley">Casablanca Valley</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="n_recommendations">Number of recommendations:</label>
+                        <select id="n_recommendations" name="n_recommendations">
+                            <option value="3">3 recommendations</option>
+                            <option value="5" selected>5 recommendations</option>
+                            <option value="10">10 recommendations</option>
+                            <option value="15">15 recommendations</option>
+                            <option value="20">20 recommendations</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">🔎 Get Wine Recommendations</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Country-Region mapping for proper validation
+        const countryRegionMap = {
+            'France': ['Bordeaux', 'Burgundy', 'Champagne', 'Loire Valley', 'Rhône Valley', 'Alsace', 'Languedoc'],
+            'Italy': ['Tuscany', 'Piedmont', 'Veneto', 'Sicily', 'Umbria'],
+            'Spain': ['Rioja', 'Ribera del Duero', 'Priorat', 'Rías Baixas'],
+            'United States': ['Napa Valley', 'Sonoma County', 'Oregon', 'Washington'],
+            'Australia': ['Barossa Valley', 'Hunter Valley', 'Margaret River'],
+            'Argentina': ['Mendoza', 'Salta'],
+            'Chile': ['Central Valley', 'Casablanca Valley']
+        };
+
+        // Update region options based on selected country
+        document.getElementById('country').addEventListener('change', function() {
+            const regionSelect = document.getElementById('region_name');
+            const selectedCountry = this.value;
+
+            // Clear current region selection
+            regionSelect.value = '';
+
+            // Remove all existing options except the default
+            while (regionSelect.children.length > 1) {
+                regionSelect.removeChild(regionSelect.lastChild);
+            }
+
+            // If a country is selected, add only its regions
+            if (selectedCountry && countryRegionMap[selectedCountry]) {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = selectedCountry;
+
+                countryRegionMap[selectedCountry].forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region;
+                    option.textContent = region;
+                    optgroup.appendChild(option);
+                });
+
+                regionSelect.appendChild(optgroup);
+            } else if (!selectedCountry) {
+                // If no country selected, show all regions grouped by country
+                Object.keys(countryRegionMap).forEach(country => {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = country;
+
+                    countryRegionMap[country].forEach(region => {
+                        const option = document.createElement('option');
+                        option.value = region;
+                        option.textContent = region;
+                        optgroup.appendChild(option);
+                    });
+
+                    regionSelect.appendChild(optgroup);
+                });
+            }
+        });
+
+        // Form validation before submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const country = document.getElementById('country').value;
+            const region = document.getElementById('region_name').value;
+
+            // If both country and region are selected, validate they match
+            if (country && region) {
+                if (!countryRegionMap[country] || !countryRegionMap[country].includes(region)) {
+                    e.preventDefault();
+                    alert('The selected region does not belong to the selected country. Please choose a matching region or clear one of the selections.');
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        // Handle multiple grape variety selection
+        document.getElementById('grape_varieties').addEventListener('change', function() {
+            const selected = Array.from(this.selectedOptions).map(option => option.value);
+            // Store selected values for form submission
+            this.setAttribute('data-selected', selected.join(','));
+        });
+    </script>
 </body>
 </html>

@@ -2,13 +2,202 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CvalVino</title>
+    <title>🍇 CvalVino</title>
     <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+    <style>
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .title-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .title-section h1 {
+            font-size: 60px;
+            margin-bottom: 10px;
+            color: #FFFFFF;
+            font-family: 'Georgia', serif;
+        }
+        .title-section p {
+            font-size: 18px;
+            color: #FFFFFF;
+            font-family: 'Georgia', serif;
+        }
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .main-button {
+            background-color: #c24f5d;
+            color: #FFFFFF;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            padding: 20px 30px;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            min-width: 280px;
+            text-align: center;
+        }
+        .main-button:hover {
+            background-color: #eb919c;
+            transform: scale(1.05);
+            color: #FFFFFF;
+        }
+        .scanner-section {
+            background-color: #F4A6B1;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+            margin-top: 30px;
+            color: #722F37;
+        }
+        .scanner-section h3 {
+            color: #722F37;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .upload-area {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        .upload-column {
+            flex: 1;
+        }
+        .image-preview {
+            flex: 1;
+            text-align: center;
+        }
+        .info-column {
+            flex: 2;
+        }
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .file-input {
+            position: absolute;
+            left: -9999px;
+        }
+        .file-input-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #722F37;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .file-input-label:hover {
+            background-color: #8b3a42;
+        }
+        .upload-button {
+            background-color: #c24f5d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .upload-button:hover {
+            background-color: #eb919c;
+        }
+        .upload-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .example-image {
+            max-width: 150px;
+            border-radius: 8px;
+            opacity: 0.7;
+        }
+    </style>
 </head>
 <body>
-    <h1>🍇🍷 CvalVino 🍷🍇</h1>
-    <p>Your Elegant Wine Recommender</p>
-    <a href="{% url 'recommend' %}"><button>🍷 Get Wine Recommendation by Characteristics</button></a>
-    <a href="{% url 'pairing' %}"><button>🍽️ Get Wine Recommendation by Food</button></a>
+    <div class="main-container">
+        <div class="title-section">
+            <h1>🍇🍷 <b>CvalVino</b> 🍷🍇</h1>
+            <p>Your Elegant Wine Recommender</p>
+        </div>
+
+        <div class="button-container">
+            <a href="{% url 'recommend' %}" class="main-button">🍷 Get Wine Recommendation by Characteristics</a>
+            <a href="{% url 'pairing' %}" class="main-button">🍽️ Get Wine Recommendation by Food</a>
+        </div>
+
+        <div class="scanner-section">
+            <h3>📸 Upload a clear photo of a wine label</h3>
+            <form method="post" action="{% url 'scanner' %}" enctype="multipart/form-data" id="scanner-form">
+                {% csrf_token %}
+                <div class="upload-area">
+                    <div class="upload-column">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="label" name="label" accept="image/*" class="file-input" onchange="previewImage(this)">
+                            <label for="label" class="file-input-label">Choose Image</label>
+                        </div>
+                        <button type="submit" class="upload-button" id="upload-btn" disabled>Get wine info</button>
+                        <p style="margin-top: 10px; font-size: 14px;">Upload a clear photo of a wine label to get information and recommendations</p>
+                    </div>
+
+                    <div class="image-preview">
+                        <div id="preview-container">
+                            <img src="{% static 'winery/images/example_wine_img.jpeg' %}" alt="Example wine image" class="example-image" onerror="this.style.display='none'">
+                            <p style="font-size: 12px; margin-top: 5px;">Example wine image</p>
+                        </div>
+                    </div>
+
+                    <div class="info-column">
+                        <div id="wine-info" style="display: none;">
+                            <h4>Extracted Wine Information</h4>
+                            <div id="wine-details"></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(input) {
+            const uploadBtn = document.getElementById('upload-btn');
+            const previewContainer = document.getElementById('preview-container');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContainer.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" class="preview-image">
+                        <p style="font-size: 12px; margin-top: 5px;">Your uploaded image</p>
+                    `;
+                };
+                reader.readAsDataURL(input.files[0]);
+                uploadBtn.disabled = false;
+            } else {
+                previewContainer.innerHTML = `
+                    <img src="{% static 'winery/images/example_wine_img.jpeg' %}" alt="Example wine image" class="example-image" onerror="this.style.display='none'">
+                    <p style="font-size: 12px; margin-top: 5px;">Example wine image</p>
+                `;
+                uploadBtn.disabled = true;
+            }
+        }
+    </script>
 </body>
 </html>

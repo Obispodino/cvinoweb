@@ -2,23 +2,136 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Wine Pairing</title>
+    <title>Wine Pairing Results - CvalVino</title>
     <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+    <style>
+        .wine-container {
+            display: flex;
+            align-items: flex-start;
+            background-color: #F4A6B1;
+            color: #722F37;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+        }
+        .wine-image {
+            flex: 0 0 150px;
+            margin-right: 20px;
+            text-align: center;
+        }
+        .wine-image img {
+            width: 120px;
+            height: auto;
+        }
+        .wine-details {
+            flex: 1;
+        }
+        .wine-details h3 {
+            color: #722F37;
+            margin-top: 0;
+            font-size: 1.4em;
+        }
+        .wine-details p {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        .wine-details strong {
+            font-weight: bold;
+        }
+        .vivino-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #800000;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .vivino-button:hover {
+            background-color: #a00000;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #c24f5d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .back-button:hover {
+            background-color: #eb919c;
+        }
+    </style>
 </head>
 <body>
-    <h1>Wine Pairing Results</h1>
-    <div class="wine-results">
+    <h1>🍷 Wine Pairing Results</h1>
+
+    <a href="{% url 'pairing' %}" class="back-button">← Back to Food Selection</a>
+    <a href="{% url 'home' %}" class="back-button" style="margin-left: 10px;">🏠 Home</a>
+
+    {% if wines %}
+        <p style="color: white; margin-bottom: 20px;">Here are wines that pair perfectly with your selected food:</p>
+
         {% for wine in wines %}
-            <div class="wine-card">
-                <img src="{{ wine.image_url }}" alt="{{ wine.wine_name }}">
-                <h2>{{ wine.wine_name }}</h2>
-                <p><strong>Winery:</strong> {{ wine.winery }}</p>
-                <p><strong>Grapes:</strong> {{ wine.grape_varieties|join:", " }}</p>
-                <p><strong>Region:</strong> {{ wine.region_name }}, {{ wine.country }}</p>
-                <p><strong>Rating:</strong> {{ wine.ratings_average }} / 5</p>
-                <a href="{{ wine.vivino_url }}" target="_blank">View on Vivino</a>
+            <div class="wine-container">
+                <div class="wine-image">
+                    {% if wine.Type == "Red" %}
+                        <img src="{% static 'winery/images/red_wine.png' %}" alt="Red Wine" onerror="this.style.display='none'">
+                    {% elif wine.Type == "White" %}
+                        <img src="{% static 'winery/images/white_wine.png' %}" alt="White Wine" onerror="this.style.display='none'">
+                    {% elif wine.Type == "Rosé" %}
+                        <img src="{% static 'winery/images/rose_bottle.png' %}" alt="Rosé Wine" onerror="this.style.display='none'">
+                    {% elif wine.Type == "Sparkling" %}
+                        <img src="{% static 'winery/images/sparkling_wine.png' %}" alt="Sparkling Wine" onerror="this.style.display='none'">
+                    {% elif wine.Type == "Dessert" %}
+                        <img src="{% static 'winery/images/dessert.png' %}" alt="Dessert Wine" onerror="this.style.display='none'">
+                    {% else %}
+                        <div style="width: 120px; height: 120px; background-color: #722F37; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🍷</div>
+                    {% endif %}
+
+                    {% comment %} Vivino search button {% endcomment %}
+                    <a href="https://www.vivino.com/search/wines?q={{ wine.WineName|urlencode }}%2C%20{{ wine.Country|urlencode }}%2C%20{{ wine.RegionName|urlencode }}"
+                       target="_blank" class="vivino-button" style="font-size: 12px; padding: 8px 12px; margin-top: 10px;">
+                        Find on Vivino
+                    </a>
+                </div>
+
+                <div class="wine-details">
+                    <h3>{{ wine.WineName|default:"Unknown Wine" }}</h3>
+                    <p><strong>Type:</strong> {{ wine.Type|default:"N/A" }}</p>
+                    <p><strong>Grapes:</strong> {{ wine.Grapes_list|default:"N/A" }}</p>
+                    <p><strong>Body:</strong> {{ wine.Body|default:"N/A" }}</p>
+                    <p><strong>ABV:</strong> {{ wine.ABV|default:"N/A" }}%</p>
+                    <p><strong>Region:</strong> {{ wine.RegionName|default:"N/A" }}</p>
+                    <p><strong>Country:</strong> {{ wine.Country|default:"N/A" }}</p>
+                    <p><strong>Acidity:</strong> {{ wine.Acidity|default:"N/A" }}</p>
+                    <p><strong>Rating:</strong> {{ wine.avg_rating|default:"N/A" }}/5</p>
+                    {% if wine.Similarity %}
+                        <p><strong>Similarity:</strong> {{ wine.Similarity|floatformat:2 }}</p>
+                    {% endif %}
+                    {% if wine.Harmonize %}
+                        <p><strong>Food Pairing:</strong>
+                        {% if wine.Harmonize|length > 0 %}
+                            {% for food in wine.Harmonize %}{{ food }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}
+                            {{ wine.Harmonize }}
+                        {% endif %}
+                        </p>
+                    {% endif %}
+                </div>
             </div>
         {% endfor %}
-    </div>
+    {% else %}
+        <div style="background-color: #F4A6B1; color: #722F37; padding: 20px; border-radius: 15px; text-align: center;">
+            <h3>No wine pairings found</h3>
+            <p>Try selecting a different food type.</p>
+            <a href="{% url 'pairing' %}" class="back-button">Try Again</a>
+        </div>
+    {% endif %}
 </body>
 </html>

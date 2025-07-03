@@ -2,17 +2,133 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Wine Pairing</title>
+    <title>Wine Pairing by Food - CvalVino</title>
     <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+    <style>
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .pairing-section {
+            background-color: #F4A6B1;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+            color: #722F37;
+        }
+        .pairing-section h3 {
+            color: #722F37;
+            margin-top: 0;
+            font-size: 1.4rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #722F37;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #722F37;
+            background-color: white;
+            color: #722F37;
+            font-size: 16px;
+        }
+        .submit-button {
+            background-color: #c24f5d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .submit-button:hover {
+            background-color: #eb919c;
+            transform: scale(1.02);
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #c24f5d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .back-button:hover {
+            background-color: #eb919c;
+        }
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+        }
+    </style>
 </head>
 <body>
-    <h1>Get Wine Recommendation by Food</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="food_pairing">Food:</label>
-        <input type="text" id="food_pairing" name="food_pairing">
-        <br>
-        <button type="submit">Get Pairing</button>
-    </form>
+    <div class="main-container">
+        <h1>🍽️ Get Wine Recommendation by Food</h1>
+
+        <a href="{% url 'home' %}" class="back-button">← Back to Home</a>
+
+        {% if error %}
+            <div class="error-message">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="pairing-section">
+            <h3>🍷 Find the Perfect Wine for Your Meal</h3>
+            <p>Select a food type to get wine recommendations that pair perfectly with your dish.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="food_pairing">Select Food Type:</label>
+                    <select id="food_pairing" name="food_pairing" required>
+                        <option value="">-- Choose a food type --</option>
+                        <option value="Beef">🥩 Beef</option>
+                        <option value="Pork">🐷 Pork</option>
+                        <option value="Poultry">🐔 Poultry</option>
+                        <option value="Lamb">🐑 Lamb</option>
+                        <option value="Game">🦌 Game</option>
+                        <option value="Fish">🐟 Fish</option>
+                        <option value="Shellfish">🦐 Shellfish</option>
+                        <option value="Vegetarian">🥬 Vegetarian</option>
+                        <option value="Pasta">🍝 Pasta</option>
+                        <option value="Pizza">🍕 Pizza</option>
+                        <option value="Cheese">🧀 Cheese</option>
+                        <option value="Spicy Food">🌶️ Spicy Food</option>
+                        <option value="Sweet Desserts">🍰 Sweet Desserts</option>
+                        <option value="Chocolate">🍫 Chocolate</option>
+                        <option value="Fruit">🍓 Fruit</option>
+                        <option value="Nuts">🥜 Nuts</option>
+                        <option value="Bread">🍞 Bread</option>
+                        <option value="Salad">🥗 Salad</option>
+                        <option value="Soup">🍲 Soup</option>
+                        <option value="Appetizers">🥨 Appetizers</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-button">🔍 Find Wine Pairings</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
