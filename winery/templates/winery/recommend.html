@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wine Recommendations</title>
+    <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+</head>
+<body>
+    <h1>Recommended Wines</h1>
+    <div class="wine-results">
+        {% for wine in wines %}
+            <div class="wine-card">
+                <img src="{{ wine.image_url }}" alt="{{ wine.wine_name }}">
+                <h2>{{ wine.wine_name }}</h2>
+                <p><strong>Winery:</strong> {{ wine.winery }}</p>
+                <p><strong>Grapes:</strong> {{ wine.grape_varieties|join:", " }}</p>
+                <p><strong>Region:</strong> {{ wine.region_name }}, {{ wine.country }}</p>
+                <p><strong>Rating:</strong> {{ wine.ratings_average }} / 5</p>
+                <a href="{{ wine.vivino_url }}" target="_blank">View on Vivino</a>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

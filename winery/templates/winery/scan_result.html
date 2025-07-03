@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Result</title>
+    <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+</head>
+<body>
+    <h1>Scan Result</h1>
+    <div class="scan-result">
+        <p><strong>Wine Type:</strong> {{ wine_type }}</p>
+        <p><strong>Winery:</strong> {{ winery }}</p>
+        <p><strong>Wine Name:</strong> {{ wine_name }}</p>
+        <p><strong>Grape Varieties:</strong> {{ grape_varieties }}</p>
+        <p><strong>Region:</strong> {{ region }}</p>
+        <p><strong>Country:</strong> {{ country }}</p>
+        <p><strong>Year:</strong> {{ year }}</p>
+    </div>
+</body>
+</html>

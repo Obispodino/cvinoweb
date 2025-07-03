@@ -1,0 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CvalVino</title>
+    <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+</head>
+<body>
+    <h1>🍇🍷 CvalVino 🍷🍇</h1>
+    <p>Your Elegant Wine Recommender</p>
+    <a href="{% url 'recommend' %}"><button>🍷 Get Wine Recommendation by Characteristics</button></a>
+    <a href="{% url 'pairing' %}"><button>🍽️ Get Wine Recommendation by Food</button></a>
+</body>
+</html>

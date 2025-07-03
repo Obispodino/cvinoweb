@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wine Pairing</title>
+    <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+</head>
+<body>
+    <h1>Get Wine Recommendation by Food</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="food_pairing">Food:</label>
+        <input type="text" id="food_pairing" name="food_pairing">
+        <br>
+        <button type="submit">Get Pairing</button>
+    </form>
+</body>
+</html>

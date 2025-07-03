@@ -1,0 +1,207 @@
+# Building “cvinoweb”: A Django Front-End for the CvalVino API
+
+Before diving into code, the project must be scaffolded in a clean local workspace, linked to GitHub, and prepared for Django development. Follow the sequence below and you will have a working front-end that mirrors the Streamlit prototype in `cvino_front`, but with the robustness and flexibility of Django.
+
+## 1  Prerequisites
+
+| Tool | Purpose | Minimum version |
+|------|---------|-----------------|
+| Python | Core language | 3.11 + [1] |
+| Git & GitHub CLI (`gh`) | Source control & remote repo | Git 2.40, gh 2.0 + [2][3] |
+| Node + npm (optional) | Front-end assets (e.g., Tailwind) | Node 18 + |
+| VS Code | IDE | Latest stable |
+
+## 2  Create and Configure the Project Folder
+
+1. **Open VS Code** → File › Open Folder → navigate to your preferred workspace and click **New Folder**.
+2. Name the folder **`cvinoweb`** and open it.
+3. Open an integrated terminal (``Ctrl+` ``). Confirm you are inside `cvinoweb`.
+
+## 3  Set Up Version Control
+
+1. `git init` – turn the folder into a local repo[4].
+2. `gh repo create cvinoweb --public --source=. --remote=origin --push`
+   * This creates the remote GitHub repo **cvinoweb** and pushes the initial empty commit[3].
+3. Add a development branch:
+   ```bash
+   git checkout -b dev
+   ```
+
+## 4  Prepare a Python Virtual Environment
+
+```bash
+python -m venv venv             # create
+source venv/bin/activate        # macOS/Linux
+# .\venv\Scripts\activate       # Windows
+pip install --upgrade pip
+```
+
+## 5  Install Django and Supporting Packages
+
+```bash
+pip install django==5.*         # long-term support series[6]
+pip install requests pillow     # HTTP + image handling
+```
+
+Commit the environment spec:
+```bash
+pip freeze > requirements.txt
+git add requirements.txt
+git commit -m "Add Django and deps"
+git push -u origin dev
+```
+
+## 6  Bootstrap the Django Project and App
+
+Inside `cvinoweb`:
+
+```bash
+django-admin startproject config .
+python manage.py startapp winery
+```
+
+* `config` = site-wide settings
+* `winery` = app that will host pages, templates, and API integrations.
+
+Add the app to `config/settings.py`:
+
+```python
+INSTALLED_APPS = [
+    # … core apps …
+    "winery",
+]
+```
+
+Run the server once to verify:
+
+```bash
+python manage.py migrate
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000` to confirm Django’s rocket page appears[5].
+
+## 7  Replicate Streamlit Pages with Django Views
+
+### 7.1 URL Routing
+
+`config/urls.py`
+
+```python
+from django.urls import path, include
+urlpatterns = [
+    path("", include("winery.urls")),
+]
+```
+
+Create `winery/urls.py`:
+
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("recommend/", views.recommend, name="recommend"),
+    path("pairing/", views.pairing, name="pairing"),
+    path("scanner/", views.scanner, name="scanner"),
+]
+```
+
+### 7.2 Core Views
+
+`winery/views.py`
+
+```python
+import requests
+from django.shortcuts import render
+CVINO_API = "https://api.cvalvino.com"   # adapt if self-hosted
+
+def home(request):
+    return render(request, "winery/home.html")
+
+def recommend(request):
+    if request.method == "POST":
+        payload = {k: v for k, v in request.POST.items() if v}
+        resp = requests.post(f"{CVINO_API}/recommend-wines", json=payload, timeout=10)
+        wines = resp.json()
+        return render(request, "winery/recommend.html", {"wines": wines})
+    return render(request, "winery/recommend_form.html")
+
+def pairing(request):
+    if request.method == "POST":
+        payload = {k: v for k, v in request.POST.items() if v}
+        resp = requests.post(f"{CVINO_API}/recommend-by-food", json=payload, timeout=10)
+        wines = resp.json()
+        return render(request, "winery/pairing.html", {"wines": wines})
+    return render(request, "winery/pairing_form.html")
+
+def scanner(request):
+    if request.method == "POST" and request.FILES.get("label"):
+        files = {"img": request.FILES["label"].file}
+        resp = requests.post(f"{CVINO_API}/read_image", files=files, timeout=10)
+        data = resp.json()
+        return render(request, "winery/scan_result.html", data)
+    return render(request, "winery/scanner_form.html")
+```
+
+## 8  Templates & Static Assets
+
+1. Create `winery/templates/winery/` and add the HTML files referenced above.
+2. For styling, integrate **Bootstrap** or **Tailwind** via CDN for speed.
+3. Put custom CSS/JS under `winery/static/winery/` and declare
+   ```python
+   STATIC_URL = "static/"
+   ```
+
+## 9  Add Image Upload Handling
+
+In `config/settings.py`:
+
+```python
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+```
+
+Update `config/urls.py` to serve uploads in development:
+
+```python
+from django.conf import settings
+from django.conf.urls.static import static
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+## 10  Django Admin Quick Setup (optional)
+
+```bash
+python manage.py createsuperuser
+```
+
+Log in at `/admin/` to monitor requests and add marketing content.
+
+## 11  Commit & Push Work
+
+```bash
+git add .
+git commit -m "Initial Django front-end mirroring Streamlit functionality"
+git push
+```
+
+Open a pull request from **dev** → **main** on GitHub and merge when ready.
+
+## 12  Deployment Pointers
+
+* **Docker**: reuse the existing Dockerfile patterns in `cvino_front`.
+* **Gunicorn + Nginx**: production-grade WSGI stack.
+* **Render / Railway / Heroku**: one-click Django deployment, set `DATABASE_URL` & `ALLOWED_HOSTS`.
+
+## 13  Next Enhancements
+
+1. **Authentication**: social login to remember user preferences.
+2. **Pagination & Caching**: improve performance for large recommendation sets.
+3. **Front-End Framework**: React or HTMX for dynamic UX.
+4. **i18n**: support wine descriptions in multiple languages.
+
+## Conclusion
+
+By following the steps above—workspace preparation, GitHub initialization, Django scaffolding, and API integration—you transform the Streamlit prototype into a scalable Django application named **cvinoweb**. The project is now ready for collaborative development through branches and pull requests, and for deployment on any modern PaaS.

@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scanner</title>
+    <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+</head>
+<body>
+    <h1>Scan a wine label</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="label">
+        <button type="submit">Scan</button>
+    </form>
+</body>
+</html>
