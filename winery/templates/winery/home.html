@@ -1,202 +1,550 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>🍇 CvalVino</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CvalVino - Your elegant wine recommendation system. Get personalized wine recommendations by characteristics, food pairing, or wine label scanning.">
+    <meta name="keywords" content="wine, recommendation, pairing, food, wine label, scanner, sommelier">
+    <title>🍇 CvalVino - Wine Recommendation System</title>
     <link rel="stylesheet" href="{% static 'winery/style.css' %}">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#722F37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CvalVino">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
+
     <style>
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .title-section {
+        /* Enhanced Home Page Styles */
+        .hero-section {
             text-align: center;
+            margin-bottom: clamp(30px, 8vw, 50px);
+            padding: clamp(20px, 5vw, 40px) 0;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #FFFFFF, #F4A6B1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: #F4A6B1;
+            margin-bottom: 30px;
+            font-style: italic;
+            animation: fadeIn 1.2s ease-in;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: clamp(15px, 4vw, 25px);
             margin-bottom: 40px;
         }
-        .title-section h1 {
-            font-size: 60px;
-            margin-bottom: 10px;
-            color: #FFFFFF;
-            font-family: 'Georgia', serif;
-        }
-        .title-section p {
-            font-size: 18px;
-            color: #FFFFFF;
-            font-family: 'Georgia', serif;
-        }
-        .button-container {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-        .main-button {
-            background-color: #c24f5d;
-            color: #FFFFFF;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            padding: 20px 30px;
-            font-size: 16px;
+
+        .feature-card {
+            background: linear-gradient(135deg, var(--secondary-pink) 0%, #E8A1AC 100%);
+            padding: clamp(20px, 5vw, 30px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            color: var(--text-dark);
             text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            min-width: 280px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .feature-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .feature-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-burgundy);
+        }
+
+        .feature-description {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            line-height: 1.5;
+            color: var(--text-dark);
+            opacity: 0.9;
+        }
+
+        .scanner-section {
+            background: linear-gradient(135deg, var(--secondary-pink) 0%, #E8A1AC 100%);
+            padding: clamp(20px, 5vw, 35px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            color: var(--text-dark);
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        .scanner-title {
+            color: var(--primary-burgundy);
+            margin-bottom: 20px;
+            font-size: clamp(1.2rem, 3.5vw, 1.5rem);
             text-align: center;
         }
-        .main-button:hover {
-            background-color: #eb919c;
-            transform: scale(1.05);
-            color: #FFFFFF;
+
+        .upload-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            align-items: start;
         }
-        .scanner-section {
-            background-color: #F4A6B1;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
-            margin-top: 30px;
-            color: #722F37;
-        }
-        .scanner-section h3 {
-            color: #722F37;
-            margin-top: 0;
-            font-size: 1.3rem;
-        }
+
         .upload-area {
             display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            margin-top: 20px;
-        }
-        .upload-column {
-            flex: 1;
-        }
-        .image-preview {
-            flex: 1;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
         }
-        .info-column {
-            flex: 2;
-        }
+
         .file-input-wrapper {
             position: relative;
-            display: inline-block;
             margin-bottom: 15px;
         }
+
         .file-input {
             position: absolute;
-            left: -9999px;
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
+
         .file-input-label {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #722F37;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 25px);
+            background-color: var(--primary-burgundy);
             color: white;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: var(--transition);
+            font-weight: bold;
+            min-height: 44px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
+
         .file-input-label:hover {
             background-color: #8b3a42;
+            transform: translateY(-2px);
         }
+
         .upload-button {
-            background-color: #c24f5d;
+            background-color: var(--accent-red);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 25px);
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            margin-left: 10px;
+            transition: var(--transition);
+            min-height: 44px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
-        .upload-button:hover {
-            background-color: #eb919c;
+
+        .upload-button:hover:not(:disabled) {
+            background-color: var(--hover-pink);
+            transform: translateY(-2px);
         }
+
         .upload-button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            opacity: 0.6;
         }
-        .preview-image {
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 8px;
-            margin-top: 10px;
+
+        .image-preview {
+            margin: 20px 0;
+            text-align: center;
         }
+
+        .preview-image,
         .example-image {
-            max-width: 150px;
-            border-radius: 8px;
+            max-width: min(250px, 80vw);
+            max-height: 200px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+
+        .example-image {
             opacity: 0.7;
+            filter: grayscale(20%);
+        }
+
+        .preview-image:hover,
+        .example-image:hover {
+            transform: scale(1.05);
+        }
+
+        .upload-instructions {
+            margin-top: 15px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: var(--text-dark);
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(244, 166, 177, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(244, 166, 177, 0.3);
+        }
+
+        .stat-item {
+            text-align: center;
+            color: var(--text-white);
+        }
+
+        .stat-number {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: bold;
+            color: var(--secondary-pink);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            opacity: 0.9;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 767px) {
+            .upload-container {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card {
+                text-align: center;
+            }
+
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .upload-container {
+                grid-template-columns: 1fr auto 1fr;
+                align-items: center;
+            }
+
+            .upload-area {
+                grid-column: 1;
+            }
+
+            .image-preview {
+                grid-column: 2;
+                margin: 0 20px;
+            }
+
+            .upload-instructions {
+                grid-column: 3;
+                text-align: left;
+                margin-top: 0;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(114, 47, 55, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="title-section">
-            <h1>🍇🍷 <b>CvalVino</b> 🍷🍇</h1>
-            <p>Your Elegant Wine Recommender</p>
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">🍇🍷 CvalVino 🍷🍇</h1>
+            <p class="hero-subtitle">Your Elegant Wine Recommendation System</p>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Wine Regions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">20</span>
+                    <span class="stat-label">Countries</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">59</span>
+                    <span class="stat-label">Grape Varieties</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">AI</span>
+                    <span class="stat-label">Powered</span>
+                </div>
+            </div>
         </div>
 
-        <div class="button-container">
-            <a href="{% url 'recommend' %}" class="main-button">🍷 Get Wine Recommendation by Characteristics</a>
-            <a href="{% url 'pairing' %}" class="main-button">🍽️ Get Wine Recommendation by Food</a>
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <a href="{% url 'recommend' %}" class="feature-card">
+                <span class="feature-icon">🍷</span>
+                <h3 class="feature-title">Wine by Characteristics</h3>
+                <p class="feature-description">Find wines based on type, grape varieties, body, ABV, region, and more. Perfect for discovering new wines that match your preferences.</p>
+            </a>
+
+            <a href="{% url 'pairing' %}" class="feature-card">
+                <span class="feature-icon">🍽️</span>
+                <h3 class="feature-title">Food & Wine Pairing</h3>
+                <p class="feature-description">Get expert wine recommendations that perfectly complement your meal. From beef to seafood, find the ideal wine pairing.</p>
+            </a>
+
+            <div class="feature-card" onclick="document.getElementById('scanner-section').scrollIntoView({behavior: 'smooth'})">
+                <span class="feature-icon">📸</span>
+                <h3 class="feature-title">Wine Label Scanner</h3>
+                <p class="feature-description">Upload a photo of any wine label and get instant information plus recommendations for similar wines.</p>
+            </div>
         </div>
 
-        <div class="scanner-section">
-            <h3>📸 Upload a clear photo of a wine label</h3>
+        <!-- Wine Label Scanner Section -->
+        <div class="scanner-section" id="scanner-section">
+            <h3 class="scanner-title">📸 Wine Label Scanner</h3>
             <form method="post" action="{% url 'scanner' %}" enctype="multipart/form-data" id="scanner-form">
                 {% csrf_token %}
-                <div class="upload-area">
-                    <div class="upload-column">
+                <div class="upload-container">
+                    <div class="upload-area">
                         <div class="file-input-wrapper">
                             <input type="file" id="label" name="label" accept="image/*" class="file-input" onchange="previewImage(this)">
-                            <label for="label" class="file-input-label">Choose Image</label>
+                            <label for="label" class="file-input-label">
+                                📁 Choose Image
+                            </label>
                         </div>
-                        <button type="submit" class="upload-button" id="upload-btn" disabled>Get wine info</button>
-                        <p style="margin-top: 10px; font-size: 14px;">Upload a clear photo of a wine label to get information and recommendations</p>
+                        <button type="submit" class="upload-button" id="upload-btn" disabled>
+                            🔍 Analyze Wine Label
+                        </button>
                     </div>
 
                     <div class="image-preview">
                         <div id="preview-container">
-                            <img src="{% static 'winery/images/example_wine_img.jpeg' %}" alt="Example wine image" class="example-image" onerror="this.style.display='none'">
-                            <p style="font-size: 12px; margin-top: 5px;">Example wine image</p>
+                            <img src="{% static 'winery/images/example_wine_img.jpeg' %}"
+                                 alt="Example wine label"
+                                 class="example-image"
+                                 onerror="this.style.display='none'">
+                            <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.7;">Example wine label</p>
                         </div>
                     </div>
 
-                    <div class="info-column">
-                        <div id="wine-info" style="display: none;">
-                            <h4>Extracted Wine Information</h4>
-                            <div id="wine-details"></div>
-                        </div>
+                    <div class="upload-instructions">
+                        <h4 style="margin-bottom: 10px; color: var(--primary-burgundy);">📋 Tips for best results:</h4>
+                        <ul style="text-align: left; padding-left: 20px; line-height: 1.6;">
+                            <li>Ensure the wine label is clearly visible</li>
+                            <li>Use good lighting and avoid shadows</li>
+                            <li>Keep the camera steady for sharp focus</li>
+                            <li>Include the entire label in the frame</li>
+                            <li>Supported formats: JPG, PNG, JPEG</li>
+                        </ul>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Analyzing Wine Label...</h3>
+            <p>Please wait while our AI extracts wine information</p>
+        </div>
+    </div>
+
     <script>
+        // Enhanced image preview with validation
         function previewImage(input) {
             const uploadBtn = document.getElementById('upload-btn');
             const previewContainer = document.getElementById('preview-container');
+            const maxFileSize = 10 * 1024 * 1024; // 10MB
 
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+
+                // Validate file size
+                if (file.size > maxFileSize) {
+                    alert('File size too large. Please choose an image under 10MB.');
+                    input.value = '';
+                    resetPreview();
+                    return;
+                }
+
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select a valid image file.');
+                    input.value = '';
+                    resetPreview();
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewContainer.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview" class="preview-image">
-                        <p style="font-size: 12px; margin-top: 5px;">Your uploaded image</p>
+                        <img src="${e.target.result}" alt="Wine label preview" class="preview-image">
+                        <p style="font-size: 0.8rem; margin-top: 8px; color: var(--primary-burgundy); font-weight: bold;">
+                            Ready to analyze: ${file.name}
+                        </p>
                     `;
                 };
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
                 uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '🔍 Analyze Wine Label';
             } else {
-                previewContainer.innerHTML = `
-                    <img src="{% static 'winery/images/example_wine_img.jpeg' %}" alt="Example wine image" class="example-image" onerror="this.style.display='none'">
-                    <p style="font-size: 12px; margin-top: 5px;">Example wine image</p>
-                `;
-                uploadBtn.disabled = true;
+                resetPreview();
             }
+        }
+
+        function resetPreview() {
+            const uploadBtn = document.getElementById('upload-btn');
+            const previewContainer = document.getElementById('preview-container');
+
+            previewContainer.innerHTML = `
+                <img src="{% static 'winery/images/example_wine_img.jpeg' %}"
+                     alt="Example wine label"
+                     class="example-image"
+                     onerror="this.style.display='none'">
+                <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.7;">Example wine label</p>
+            `;
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '🔍 Analyze Wine Label';
+        }
+
+        // Show loading overlay on form submission
+        document.getElementById('scanner-form').addEventListener('submit', function(e) {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'flex';
+
+            // Disable the submit button to prevent double submission
+            const uploadBtn = document.getElementById('upload-btn');
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '⏳ Analyzing...';
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add animation classes when elements come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.feature-card, .scanner-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add touch feedback for mobile
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.feature-card, .file-input-label, .upload-button').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+
+                el.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
         }
     </script>
 </body>
