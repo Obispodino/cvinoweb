@@ -117,6 +117,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Add notebooks directory to static files dirs
+STATICFILES_DIRS = [
+    BASE_DIR / "notebooks",
+]
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

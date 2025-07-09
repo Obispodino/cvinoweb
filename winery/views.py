@@ -1,17 +1,67 @@
 import requests
 from django.shortcuts import render
+import csv
 CVINO_API = "https://fast-cvino-399730216663.europe-west1.run.app"
 
 def home(request):
-    return render(request, "winery/home.html")
+    # Count unique regions and grapes for display on the home page
+    region_count = 0
+    country_count = 0
+    with open('notebooks/unique_regions.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # Skip header
+        regions = list(reader)
+        region_count = len(regions)
+        country_count = len(set(country for _, country in regions))
+
+    grape_count = 0
+    with open('notebooks/unique_grapes.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # Skip header
+        grape_count = len(list(reader))
+
+    context = {
+        'region_count': region_count,
+        'country_count': country_count,
+        'grape_count': grape_count
+    }
+    return render(request, "winery/home.html", context)
 
 def recommend(request):
+    # Load data for the form from CSV files - do this for both GET and POST requests
+    countries = []
+    regions_data = {}
+    with open('notebooks/unique_regions.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # Skip header
+        for row in reader:
+            region, country = row
+            if country not in countries:
+                countries.append(country)
+            if country not in regions_data:
+                regions_data[country] = []
+            regions_data[country].append(region)
+
+    # Sort regions within each country
+    for country in regions_data:
+        regions_data[country].sort()
+
+    grapes = []
+    with open('notebooks/unique_grapes.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader) # Skip header
+        for row in reader:
+            grapes.append(row[0].strip("[]'"))
+
     if request.method == "POST":
         # Build payload with proper data types and validation
         payload = {}
 
         # Handle grape varieties (multiple selection)
-        grape_varieties = request.POST.getlist('grape_varieties')
+        grape_varieties = request.POST.getlist('grape_varieties[]')
+        if not grape_varieties:  # Fall back to the old name if the new format isn't found
+            grape_varieties = request.POST.getlist('grape_varieties')
+
         if grape_varieties and any(grape_varieties):  # Check if any non-empty values
             # Filter out empty strings
             filtered_grapes = [grape.strip() for grape in grape_varieties if grape.strip()]
@@ -20,7 +70,7 @@ def recommend(request):
 
         # Handle other fields
         for k, v in request.POST.items():
-            if k in ['csrfmiddlewaretoken', 'grape_varieties']:
+            if k in ['csrfmiddlewaretoken', 'grape_varieties', 'grape_varieties[]']:
                 continue
 
             if v and v.strip():  # Only include non-empty, non-whitespace values
@@ -234,10 +284,21 @@ def recommend(request):
                 else:
                     wine['harmonize_display'] = 'N/A'
 
+                # Ensure WineName is populated
+                if not wine.get('WineName'):
+                    wine['WineName'] = 'Unknown Wine'
+
             return render(request, "winery/recommend.html", {"wines": wines})
         except requests.exceptions.RequestException as e:
             return render(request, "winery/recommend_form.html", {"error": f"API Error: {str(e)}"})
-    return render(request, "winery/recommend_form.html")
+
+    context = {
+        'countries': sorted(countries),
+        'regions_data': regions_data,
+        'grapes': sorted(grapes)
+    }
+    return render(request, "winery/recommend_form.html", context)
+
 
 def pairing(request):
     if request.method == "POST":
@@ -260,6 +321,25 @@ def pairing(request):
             resp.raise_for_status()
             data = resp.json()
             wines = data.get('wines', data) if isinstance(data, dict) else data
+
+            # Process wine data for food pairing results
+            for wine in wines:
+                # Ensure WineName is populated
+                if not wine.get('WineName'):
+                    wine['WineName'] = 'Unknown Wine'
+
+                # Process grapes if needed
+                if wine.get('Grapes_list'):
+                    grapes_str = wine['Grapes_list']
+                    if isinstance(grapes_str, str) and grapes_str.startswith('['):
+                        # Remove brackets and quotes, then split
+                        grapes_str = grapes_str.strip('[]').replace("'", "")
+                        wine['grapes_display'] = grapes_str
+                    else:
+                        wine['grapes_display'] = grapes_str
+                else:
+                    wine['grapes_display'] = 'N/A'
+
             return render(request, "winery/pairing.html", {"wines": wines})
         except requests.exceptions.RequestException as e:
             return render(request, "winery/pairing_form.html", {"error": f"API Error: {str(e)}"})
@@ -273,6 +353,26 @@ def scanner(request):
             resp.raise_for_status()
             data = resp.json()
 
+            # Get the recommendations
+            recommendations = data.get('recommendations', [])
+
+            # Process recommendations to ensure WineName and Winery are populated
+            for wine in recommendations:
+                if not wine.get('WineName'):
+                    wine['WineName'] = 'Unknown Wine'
+
+                # Process grapes if needed
+                if wine.get('Grapes_list'):
+                    grapes_str = wine['Grapes_list']
+                    if isinstance(grapes_str, str) and grapes_str.startswith('['):
+                        # Remove brackets and quotes, then split
+                        grapes_str = grapes_str.strip('[]').replace("'", "")
+                        wine['grapes_display'] = grapes_str
+                    else:
+                        wine['grapes_display'] = grapes_str
+                else:
+                    wine['grapes_display'] = 'N/A'
+
             # Process the extracted wine information for the form
             extracted_info = {
                 'wine_type': data.get('wine_type', ''),
@@ -283,7 +383,7 @@ def scanner(request):
                 'country': data.get('country', ''),
                 'region': data.get('region', ''),
                 'extraction_successful': data.get('extraction_successful', False),
-                'recommendations': data.get('recommendations', [])
+                'recommendations': recommendations
             }
 
             # Process grape varieties if it's a list

@@ -341,15 +341,15 @@
             <!-- Stats Section -->
             <div class="stats-section">
                 <div class="stat-item">
-                    <span class="stat-number">500+</span>
+                    <span class="stat-number">{{ region_count }}</span>
                     <span class="stat-label">Wine Regions</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">20</span>
+                    <span class="stat-number">{{ country_count }}</span>
                     <span class="stat-label">Countries</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">59</span>
+                    <span class="stat-number">{{ grape_count }}</span>
                     <span class="stat-label">Grape Varieties</span>
                 </div>
                 <div class="stat-item">
@@ -400,7 +400,7 @@
 
                     <div class="image-preview">
                         <div id="preview-container">
-                            <img src="{% static 'winery/images/example_wine_img.jpeg' %}"
+                            <img src="{% static 'label_example.jpeg' %}"
                                  alt="Example wine label"
                                  class="example-image"
                                  onerror="this.style.display='none'">
@@ -480,7 +480,7 @@
             const previewContainer = document.getElementById('preview-container');
 
             previewContainer.innerHTML = `
-                <img src="{% static 'winery/images/example_wine_img.jpeg' %}"
+                <img src="{% static 'label_example.jpeg' %}"
                      alt="Example wine label"
                      class="example-image"
                      onerror="this.style.display='none'">

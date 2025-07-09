@@ -102,9 +102,6 @@
 
                 <div class="wine-details">
                     <h3>{{ wine.WineName }}</h3>
-                    {% if wine.Winery %}
-                        <p><strong>Winery:</strong> {{ wine.Winery }}</p>
-                    {% endif %}
                     <p><strong>Type:</strong> {{ wine.Type }}</p>
                     <p><strong>Grapes:</strong> {{ wine.grapes_display }}</p>
                     <p><strong>Body:</strong> {{ wine.Body|default:"N/A" }}</p>

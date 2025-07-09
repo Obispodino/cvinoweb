@@ -185,6 +185,7 @@
                                 <option value="Rosé" {% if wine_type == "Rosé" %}selected{% endif %}>Rosé</option>
                                 <option value="Sparkling" {% if wine_type == "Sparkling" %}selected{% endif %}>Sparkling</option>
                                 <option value="Dessert" {% if wine_type == "Dessert" %}selected{% endif %}>Dessert</option>
+                                <option value="Fortified" {% if wine_type == "Fortified" %}selected{% endif %}>Fortified</option>
                             </select>
                         </div>
 
@@ -246,11 +247,8 @@
                     {% for wine in recommendations %}
                         <div class="wine-card">
                             <h4>{{ wine.WineName|default:"Unknown Wine" }}</h4>
-                            {% if wine.Winery %}
-                                <p><strong>Winery:</strong> {{ wine.Winery }}</p>
-                            {% endif %}
                             <p><strong>Type:</strong> {{ wine.Type|default:"N/A" }}</p>
-                            <p><strong>Grapes:</strong> {{ wine.Grapes|default:"N/A" }}</p>
+                            <p><strong>Grapes:</strong> {{ wine.grapes_display|default:"N/A" }}</p>
                             <p><strong>Country:</strong> {{ wine.Country|default:"N/A" }}</p>
                             <p><strong>Region:</strong> {{ wine.RegionName|default:"N/A" }}</p>
                             {% if wine.Similarity %}

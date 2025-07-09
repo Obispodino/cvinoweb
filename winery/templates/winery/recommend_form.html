@@ -100,396 +100,117 @@
         {% endif %}
 
         <div class="recommendation-section">
-            <h3>🔍 Find Your Perfect Wine</h3>
-            <p>Select wine characteristics to get personalized recommendations from our extensive wine database.</p>
-
             <form method="post">
                 {% csrf_token %}
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="wine_type">Wine Type:</label>
+                        <label for="wine_type">Wine Type</label>
                         <select id="wine_type" name="wine_type">
-                            <option value="">-- Select wine type --</option>
-                            <option value="Red">🍷 Red</option>
-                            <option value="White">🥂 White</option>
-                            <option value="Rosé">🌹 Rosé</option>
-                            <option value="Sparkling">🍾 Sparkling</option>
-                            <option value="Dessert">🍯 Dessert</option>
-                            <option value="Fortified">🥃 Fortified</option>
+                            <option value="Red" selected>Red</option>
+                            <option value="White">White</option>
+                            <option value="Rosé">Rosé</option>
+                            <option value="Sparkling">Sparkling</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Fortified">Fortified</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="grape_varieties">Grape Varieties:</label>
-                        <select id="grape_varieties" name="grape_varieties" multiple>
-                            <option value="">-- Select grape varieties --</option>
-                            <optgroup label="Red Grapes">
-                                <option value="Cabernet Sauvignon">Cabernet Sauvignon</option>
-                                <option value="Merlot">Merlot</option>
-                                <option value="Pinot Noir">Pinot Noir</option>
-                                <option value="Syrah">Syrah</option>
-                                <option value="Shiraz">Shiraz</option>
-                                <option value="Malbec">Malbec</option>
-                                <option value="Tempranillo">Tempranillo</option>
-                                <option value="Sangiovese">Sangiovese</option>
-                                <option value="Grenache">Grenache</option>
-                                <option value="Barbera">Barbera</option>
-                                <option value="Nebbiolo">Nebbiolo</option>
-                                <option value="Zinfandel">Zinfandel</option>
-                            </optgroup>
-                            <optgroup label="White Grapes">
-                                <option value="Chardonnay">Chardonnay</option>
-                                <option value="Sauvignon Blanc">Sauvignon Blanc</option>
-                                <option value="Riesling">Riesling</option>
-                                <option value="Pinot Grigio">Pinot Grigio</option>
-                                <option value="Pinot Gris">Pinot Gris</option>
-                                <option value="Gewürztraminer">Gewürztraminer</option>
-                                <option value="Albariño">Albariño</option>
-                                <option value="Viognier">Viognier</option>
-                                <option value="Chenin Blanc">Chenin Blanc</option>
-                                <option value="Moscato">Moscato</option>
-                            </optgroup>
+                        <label for="country">Country</label>
+                        <select id="country" name="country">
+                            <option value="">Select a country</option>
+                            {% for country in countries %}
+                                <option value="{{ country }}">{{ country }}</option>
+                            {% endfor %}
                         </select>
-                        <small style="color: #722F37; margin-top: 5px;">Hold Ctrl/Cmd to select multiple varieties</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="body">Body:</label>
+                        <label for="region_name">Region</label>
+                        <select id="region_name" name="region_name">
+                            <option value="">Select a country first</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grape_varieties">Grape Varieties (multi-select)</label>
+                        <select id="grape_varieties" name="grape_varieties[]" multiple size="5">
+                            {% for grape in grapes %}
+                                <option value="{{ grape }}">{{ grape }}</option>
+                            {% endfor %}
+                        </select>
+                        <small>Hold Ctrl/Cmd to select multiple varieties</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="body">Body</label>
                         <select id="body" name="body">
-                            <option value="">-- Select body --</option>
-                            <option value="Very light-bodied">Very Light-bodied</option>
+                            <option value="">Any</option>
                             <option value="Light-bodied">Light-bodied</option>
-                            <option value="Medium-bodied" selected>Medium-bodied</option>
+                            <option value="Medium-bodied">Medium-bodied</option>
                             <option value="Full-bodied">Full-bodied</option>
-                            <option value="Very full-bodied">Very Full-bodied</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="abv">ABV (%):</label>
-                        <input type="number" id="abv" name="abv" step="0.1" min="0" max="20" value="13.5" placeholder="e.g., 13.5">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="acidity">Acidity:</label>
+                        <label for="acidity">Acidity</label>
                         <select id="acidity" name="acidity">
-                            <option value="">-- Select acidity --</option>
+                            <option value="">Any</option>
                             <option value="Low">Low</option>
-                            <option value="Medium" selected>Medium</option>
+                            <option value="Medium">Medium</option>
                             <option value="High">High</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="country">Country:</label>
-                        <select id="country" name="country">
-                            <option value="">-- Select country --</option>
-                            <option value="France">🇫🇷 France</option>
-                            <option value="Italy">🇮🇹 Italy</option>
-                            <option value="Spain">🇪🇸 Spain</option>
-                            <option value="United States">🇺🇸 United States</option>
-                            <option value="Australia">🇦🇺 Australia</option>
-                            <option value="Argentina">🇦🇷 Argentina</option>
-                            <option value="Chile">🇨🇱 Chile</option>
-                            <option value="Germany">🇩🇪 Germany</option>
-                            <option value="Portugal">🇵🇹 Portugal</option>
-                            <option value="South Africa">🇿🇦 South Africa</option>
-                            <option value="New Zealand">🇳🇿 New Zealand</option>
-                            <option value="Austria">🇦🇹 Austria</option>
-                            <option value="Greece">🇬🇷 Greece</option>
-                            <option value="Hungary">🇭🇺 Hungary</option>
-                            <option value="Romania">🇷🇴 Romania</option>
-                            <option value="Bulgaria">🇧🇬 Bulgaria</option>
-                            <option value="Croatia">🇭🇷 Croatia</option>
-                            <option value="Slovenia">🇸🇮 Slovenia</option>
-                            <option value="Brazil">🇧🇷 Brazil</option>
-                            <option value="Uruguay">🇺🇾 Uruguay</option>
-                        </select>
+                        <label for="abv">Min ABV (%)</label>
+                        <input type="number" id="abv" name="abv" step="0.1" value="12.0">
                     </div>
 
                     <div class="form-group">
-                        <label for="region_name">Region:</label>
-                        <select id="region_name" name="region_name">
-                            <option value="">-- Select region --</option>
-                            <optgroup label="France">
-                                <option value="Bordeaux">Bordeaux</option>
-                                <option value="Burgundy">Burgundy</option>
-                                <option value="Champagne">Champagne</option>
-                                <option value="Loire Valley">Loire Valley</option>
-                                <option value="Rhône Valley">Rhône Valley</option>
-                                <option value="Alsace">Alsace</option>
-                                <option value="Languedoc">Languedoc</option>
-                            </optgroup>
-                            <optgroup label="Italy">
-                                <option value="Tuscany">Tuscany</option>
-                                <option value="Piedmont">Piedmont</option>
-                                <option value="Veneto">Veneto</option>
-                                <option value="Sicily">Sicily</option>
-                                <option value="Umbria">Umbria</option>
-                            </optgroup>
-                            <optgroup label="Spain">
-                                <option value="Rioja">Rioja</option>
-                                <option value="Ribera del Duero">Ribera del Duero</option>
-                                <option value="Priorat">Priorat</option>
-                                <option value="Rías Baixas">Rías Baixas</option>
-                            </optgroup>
-                            <optgroup label="United States">
-                                <option value="Napa Valley">Napa Valley</option>
-                                <option value="Sonoma County">Sonoma County</option>
-                                <option value="Oregon">Oregon</option>
-                                <option value="Washington">Washington</option>
-                            </optgroup>
-                            <optgroup label="Australia">
-                                <option value="Barossa Valley">Barossa Valley</option>
-                                <option value="Hunter Valley">Hunter Valley</option>
-                                <option value="Margaret River">Margaret River</option>
-                            </optgroup>
-                            <optgroup label="Argentina">
-                                <option value="Mendoza">Mendoza</option>
-                                <option value="Salta">Salta</option>
-                            </optgroup>
-                            <optgroup label="Chile">
-                                <option value="Central Valley">Central Valley</option>
-                                <option value="Casablanca Valley">Casablanca Valley</option>
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="n_recommendations">Number of recommendations:</label>
-                        <select id="n_recommendations" name="n_recommendations">
-                            <option value="3">3 recommendations</option>
-                            <option value="5" selected>5 recommendations</option>
-                            <option value="10">10 recommendations</option>
-                            <option value="15">15 recommendations</option>
-                            <option value="20">20 recommendations</option>
-                        </select>
+                        <label for="n_recommendations">Number of Recommendations</label>
+                        <input type="number" id="n_recommendations" name="n_recommendations" value="5">
                     </div>
                 </div>
-
-                <button type="submit" class="submit-button">🔎 Get Wine Recommendations</button>
+                <button type="submit" class="submit-button">Get Recommendations</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Country-Region mapping for proper validation (comprehensive)
-        const countryRegionMap = {
-            'France': [
-                'Bordeaux', 'Burgundy', 'Champagne', 'Loire Valley', 'Rhône Valley', 'Alsace', 'Languedoc',
-                'Terrasses du Larzac', 'Provence', 'Côtes du Rhône', 'Beaujolais', 'Jura', 'Savoie',
-                'Corsica', 'Sud-Ouest', 'Bergerac', 'Cahors', 'Madiran', 'Jurançon', 'Gaillac',
-                'Côtes de Gascogne', 'Côtes du Roussillon', 'Banyuls', 'Collioure', 'Fitou',
-                'Corbières', 'Minervois', 'Saint-Chinian', 'Faugères', 'Pic Saint-Loup',
-                'Coteaux du Languedoc', 'Muscadet', 'Sancerre', 'Pouilly-Fumé', 'Chablis',
-                'Côte de Beaune', 'Côte de Nuits', 'Mâcon', 'Mercurey', 'Givry', 'Rully',
-                'Châteauneuf-du-Pape', 'Hermitage', 'Côte-Rôtie', 'Condrieu', 'Saint-Joseph',
-                'Crozes-Hermitage', 'Gigondas', 'Vacqueyras', 'Tavel', 'Lirac'
-            ],
-            'Italy': [
-                'Tuscany', 'Piedmont', 'Veneto', 'Sicily', 'Umbria', 'Marche', 'Abruzzo',
-                'Campania', 'Puglia', 'Calabria', 'Basilicata', 'Sardinia', 'Lombardy',
-                'Trentino-Alto Adige', 'Friuli-Venezia Giulia', 'Emilia-Romagna', 'Lazio',
-                'Molise', 'Valle d\'Aosta', 'Liguria', 'Chianti', 'Chianti Classico',
-                'Brunello di Montalcino', 'Vino Nobile di Montepulciano', 'Barolo', 'Barbaresco',
-                'Amarone della Valpolicella', 'Soave', 'Prosecco', 'Franciacorta', 'Lambrusco',
-                'Sangiovese di Romagna', 'Trebbiano d\'Abruzzo', 'Montepulciano d\'Abruzzo',
-                'Nero d\'Avola', 'Etna', 'Marsala', 'Pantelleria'
-            ],
-            'Spain': [
-                'Rioja', 'Ribera del Duero', 'Priorat', 'Rías Baixas', 'Rueda', 'Toro',
-                'Bierzo', 'Jumilla', 'Yecla', 'Alicante', 'Valencia', 'Utiel-Requena',
-                'La Mancha', 'Valdepeñas', 'Montilla-Moriles', 'Jerez', 'Manzanilla',
-                'Málaga', 'Sierras de Málaga', 'Condado de Huelva', 'Penedès', 'Cava',
-                'Costers del Segre', 'Conca de Barberà', 'Tarragona', 'Terra Alta',
-                'Montsant', 'Empordà', 'Pla de Bages', 'Alella', 'Catalunya',
-                'Navarra', 'Campo de Borja', 'Calatayud', 'Cariñena', 'Somontano',
-                'Cigales', 'Arribes', 'Tierra de León', 'Tierra del Vino de Zamora'
-            ],
-            'United States': [
-                'Napa Valley', 'Sonoma County', 'Oregon', 'Washington', 'California',
-                'Paso Robles', 'Santa Barbara County', 'Central Coast', 'Monterey',
-                'Santa Cruz Mountains', 'Livermore Valley', 'Lodi', 'Mendocino',
-                'Lake County', 'Sierra Foothills', 'Temecula Valley', 'Finger Lakes',
-                'Long Island', 'Hudson River Region', 'Willamette Valley', 'Umpqua Valley',
-                'Rogue Valley', 'Columbia Valley', 'Yakima Valley', 'Walla Walla Valley',
-                'Red Mountain', 'Horse Heaven Hills', 'Rattlesnake Hills', 'Wahluke Slope',
-                'Texas Hill Country', 'Virginia', 'North Carolina', 'Michigan', 'New York'
-            ],
-            'Australia': [
-                'Barossa Valley', 'Hunter Valley', 'Margaret River', 'McLaren Vale',
-                'Adelaide Hills', 'Clare Valley', 'Eden Valley', 'Coonawarra',
-                'Yarra Valley', 'Mornington Peninsula', 'Grampians', 'Heathcote',
-                'King Valley', 'Beechworth', 'Rutherglen', 'Goulburn Valley',
-                'Central Victoria', 'Geelong', 'Macedon Ranges', 'Sunbury',
-                'Tasmania', 'Great Southern', 'Mount Barker', 'Frankland River',
-                'Porongurup', 'Denmark', 'Albany', 'Pemberton', 'Blackwood Valley',
-                'Geographe', 'Peel', 'Perth Hills', 'Swan District'
-            ],
-            'Argentina': [
-                'Mendoza', 'Salta', 'San Juan', 'La Rioja', 'Catamarca', 'Tucumán',
-                'Córdoba', 'Neuquén', 'Río Negro', 'Chubut', 'Buenos Aires',
-                'Entre Ríos', 'Maipú', 'Luján de Cuyo', 'Uco Valley', 'Tupungato',
-                'Tunuyán', 'San Carlos', 'Agrelo', 'Perdriel', 'Chacras de Coria',
-                'Vistalba', 'Las Compuertas', 'Cafayate', 'Molinos', 'Cachi',
-                'Angastaco', 'San Carlos (Salta)', 'Seclantas', 'La Poma'
-            ],
-            'Chile': [
-                'Central Valley', 'Casablanca Valley', 'Maipo Valley', 'Rapel Valley',
-                'Colchagua Valley', 'Cachapoal Valley', 'Curicó Valley', 'Maule Valley',
-                'Aconcagua Valley', 'San Antonio Valley', 'Leyda Valley', 'Lo Abarca',
-                'Rosario Valley', 'Limari Valley', 'Choapa Valley', 'Elqui Valley',
-                'Huasco Valley', 'Copiapo Valley', 'Bio Bio Valley', 'Itata Valley',
-                'Malleco Valley', 'Osorno Valley', 'Cauquenes', 'Loncomilla',
-                'Claro Valley', 'Lontué Valley', 'Molina', 'Sagrada Familia'
-            ],
-            'Germany': [
-                'Mosel', 'Rheingau', 'Rheinhessen', 'Pfalz', 'Baden', 'Württemberg',
-                'Nahe', 'Mittelrhein', 'Ahr', 'Franken', 'Hessische Bergstraße',
-                'Saale-Unstrut', 'Sachsen', 'Bernkastel', 'Piesport', 'Wehlen',
-                'Graach', 'Zeltingen', 'Ürzig', 'Erden', 'Kröv', 'Traben-Trarbach'
-            ],
-            'Portugal': [
-                'Douro', 'Vinho Verde', 'Dão', 'Bairrada', 'Alentejo', 'Lisboa',
-                'Tejo', 'Península de Setúbal', 'Algarve', 'Trás-os-Montes',
-                'Beira Interior', 'Távora-Varosa', 'Lafões', 'Bucelas', 'Colares',
-                'Carcavelos', 'Óbidos', 'Lourinhã', 'Torres Vedras', 'Alenquer',
-                'Arruda', 'Encostas d\'Aire', 'Palmela', 'Moscatel de Setúbal'
-            ],
-            'South Africa': [
-                'Stellenbosch', 'Paarl', 'Franschhoek', 'Walker Bay', 'Constantia',
-                'Swartland', 'Tulbagh', 'Wellington', 'Worcester', 'Robertson',
-                'Klein Karoo', 'Olifants River', 'Breede River Valley', 'Coastal Region',
-                'Cape South Coast', 'Overberg', 'Elgin', 'Bot River', 'Hermanus',
-                'Hemel-en-Aarde Valley', 'Durbanville', 'Tygerberg', 'Philadelphia'
-            ],
-            'New Zealand': [
-                'Marlborough', 'Central Otago', 'Hawke\'s Bay', 'Martinborough',
-                'Nelson', 'Canterbury', 'Gisborne', 'Auckland', 'Northland',
-                'Wairarapa', 'Waipara Valley', 'Waitaki Valley', 'Bannockburn',
-                'Gibbston', 'Cromwell', 'Alexandra', 'Bendigo', 'Lowburn',
-                'Wanaka', 'Queenstown', 'Te Kauwhata', 'Kumeu', 'Henderson'
-            ],
-            'Austria': [
-                'Wachau', 'Kremstal', 'Kamptal', 'Weinviertel', 'Burgenland',
-                'Steiermark', 'Wien', 'Carnuntum', 'Thermenregion', 'Wagram',
-                'Traisental', 'Donauland', 'Neusiedlersee', 'Leithaberg',
-                'Mittelburgenland', 'Eisenberg', 'Rosalia', 'Vulkanland Steiermark',
-                'Südsteiermark', 'Weststeiermark', 'Ruster Ausbruch'
-            ],
-            'Greece': [
-                'Santorini', 'Nemea', 'Naoussa', 'Mantinia', 'Patras', 'Cephalonia',
-                'Zante', 'Rhodes', 'Crete', 'Paros', 'Lemnos', 'Samos', 'Muscat of Samos',
-                'Rapsani', 'Slopes of Meliton', 'Goumenissa', 'Amynteo', 'Messenikola',
-                'Anchialos', 'Robola of Cephalonia', 'Muscat of Rio Patras'
-            ],
-            'Hungary': [
-                'Tokaj', 'Eger', 'Villány', 'Szekszárd', 'Badacsony', 'Balaton',
-                'Sopron', 'Mór', 'Neszmély', 'Etyek-Buda', 'Mátra', 'Bükk',
-                'Kunság', 'Hajós-Baja', 'Csongrád', 'Tolna', 'Pannonhalma',
-                'Zala', 'Somló', 'Nagy-Somló', 'Balatonfüred-Csopak'
-            ],
-            'Romania': [
-                'Cotnari', 'Murfatlar', 'Dealu Mare', 'Târnave', 'Drăgășani',
-                'Odobești', 'Panciu', 'Huși', 'Bohotin', 'Iași', 'Nicorești',
-                'Pietroasa', 'Ștefănești', 'Segarcea', 'Sâmburești', 'Miniș',
-                'Recaș', 'Banat', 'Crișana', 'Maramureș', 'Oltenia', 'Muntenia'
-            ],
-            'Bulgaria': [
-                'Thracian Valley', 'Danubian Plain', 'Black Sea Region', 'Struma Valley',
-                'Rose Valley', 'Plovdiv', 'Pazardzhik', 'Stara Zagora', 'Haskovo',
-                'Burgas', 'Varna', 'Shumen', 'Razgrad', 'Ruse', 'Pleven', 'Vratsa',
-                'Montana', 'Vidin', 'Blagoevgrad', 'Kyustendil', 'Pernik', 'Sofia'
-            ],
-            'Croatia': [
-                'Istria', 'Kvarner', 'Dalmatia', 'Croatian Uplands', 'Slavonia',
-                'Međimurje', 'Zagorje', 'Moslavina', 'Pokuplje', 'Prigorje-Bilogora',
-                'Plešivica', 'Kutjevo', 'Krndija', 'Baranja', 'Podunavlje',
-                'Pelješac', 'Korčula', 'Vis', 'Hvar', 'Brač', 'Pag'
-            ],
-            'Slovenia': [
-                'Primorska', 'Podravje', 'Posavje', 'Goriška Brda', 'Vipava Valley',
-                'Karst', 'Istria', 'Ljutomer-Ormož', 'Maribor', 'Radgona-Kapela',
-                'Štajerska', 'Prekmurje', 'Dolenjska', 'Bela Krajina', 'Bizeljsko-Sremič'
-            ],
-            'Brazil': [
-                'Serra Gaúcha', 'Vale dos Vinhedos', 'Campanha', 'Serra do Sudeste',
-                'Campos de Cima da Serra', 'Vale do São Francisco', 'Bahia', 'Pernambuco',
-                'Minas Gerais', 'São Paulo', 'Santa Catarina', 'Paraná', 'Espírito Santo'
-            ],
-            'Uruguay': [
-                'Montevideo', 'Canelones', 'Colonia', 'San José', 'Florida', 'Maldonado',
-                'Paysandú', 'Salto', 'Rivera', 'Tacuarembó', 'Durazno', 'Soriano'
-            ]
-        };
+        // Region dropdown dynamic population
+        const regionsData = {{ regions_data|safe }};
+        const countrySelect = document.getElementById('country');
+        const regionSelect = document.getElementById('region_name');
 
-        // Update region options based on selected country
-        document.getElementById('country').addEventListener('change', function() {
-            const regionSelect = document.getElementById('region_name');
+        countrySelect.addEventListener('change', function() {
             const selectedCountry = this.value;
+            const regions = regionsData[selectedCountry] || [];
 
-            // Clear current region selection
-            regionSelect.value = '';
+            // Clear existing options
+            regionSelect.innerHTML = '<option value="">Select a region</option>';
 
-            // Remove all existing options except the default
-            while (regionSelect.children.length > 1) {
-                regionSelect.removeChild(regionSelect.lastChild);
-            }
-
-            // If a country is selected, add only its regions
-            if (selectedCountry && countryRegionMap[selectedCountry]) {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = selectedCountry;
-
-                countryRegionMap[selectedCountry].forEach(region => {
-                    const option = document.createElement('option');
-                    option.value = region;
-                    option.textContent = region;
-                    optgroup.appendChild(option);
-                });
-
-                regionSelect.appendChild(optgroup);
-            } else if (!selectedCountry) {
-                // If no country selected, show all regions grouped by country
-                Object.keys(countryRegionMap).forEach(country => {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = country;
-
-                    countryRegionMap[country].forEach(region => {
-                        const option = document.createElement('option');
-                        option.value = region;
-                        option.textContent = region;
-                        optgroup.appendChild(option);
-                    });
-
-                    regionSelect.appendChild(optgroup);
-                });
-            }
+            // Add new options
+            regions.sort().forEach(function(region) {
+                const option = document.createElement('option');
+                option.value = region;
+                option.textContent = region;
+                regionSelect.appendChild(option);
+            });
         });
 
-        // Form validation before submission
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const country = document.getElementById('country').value;
-            const region = document.getElementById('region_name').value;
+        // Enhanced multi-select styling and behavior
+        const grapeSelect = document.getElementById('grape_varieties');
 
-            // If both country and region are selected, validate they match
-            if (country && region) {
-                if (!countryRegionMap[country] || !countryRegionMap[country].includes(region)) {
-                    e.preventDefault();
-                    alert('The selected region does not belong to the selected country. Please choose a matching region or clear one of the selections.');
-                    return false;
-                }
-            }
+        // Improve the appearance of the multi-select
+        grapeSelect.style.height = 'auto';
+        grapeSelect.style.minHeight = '150px';
 
-            return true;
-        });
-
-        // Handle multiple grape variety selection
-        document.getElementById('grape_varieties').addEventListener('change', function() {
-            const selected = Array.from(this.selectedOptions).map(option => option.value);
-            // Store selected values for form submission
-            this.setAttribute('data-selected', selected.join(','));
-        });
+        // Initialize the country dropdown to trigger region population on page load
+        // if there's a previously selected country
+        if (countrySelect.value) {
+            countrySelect.dispatchEvent(new Event('change'));
+        }
     </script>
 </body>
 </html>
