@@ -19,6 +19,82 @@
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
 
     <style>
+        /* About Us Section Styles */
+        .about-section {
+            margin-top: 40px;
+            padding: clamp(25px, 6vw, 40px);
+            background: rgba(114, 47, 55, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(114, 47, 55, 0.3);
+            animation: fadeIn 1.6s ease-in;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--primary-burgundy);
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 15px;
+        }
+
+        .about-description {
+            text-align: center;
+            color: var(--text-white);
+            opacity: 0.9;
+            margin-bottom: 30px;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+
+        .contributors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(20px, 4vw, 30px);
+        }
+
+        .contributor-card {
+            background: linear-gradient(135deg, rgba(114, 47, 55, 0.8) 0%, rgba(114, 47, 55, 0.6) 100%);
+            padding: clamp(20px, 4vw, 25px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .contributor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.3);
+        }
+
+        .contributor-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid var(--secondary-pink);
+            object-fit: cover;
+        }
+
+        .contributor-name {
+            color: var(--secondary-pink);
+            font-size: clamp(1.1rem, 3vw, 1.2rem);
+            margin-bottom: 10px;
+        }
+
+        .contributor-bio {
+            color: var(--text-white);
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 767px) {
+            .contributors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Enhanced Home Page Styles */
         .hero-section {
             text-align: center;
@@ -420,6 +496,38 @@
                     </div>
                 </div>
             </form>
+        </div>
+
+        <!-- About Us Section -->
+        <div class="about-section" id="about-section">
+            <h3 class="section-title">🍇 About Us</h3>
+            <p class="about-description">Meet the team behind CvalVino, passionate wine enthusiasts and tech innovators.</p>
+
+            <div class="contributors-grid">
+                <div class="contributor-card">
+                    <img src="https://github.com/Obispodino.png" alt="Dino" class="contributor-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%23722F37%22></rect><text x=%2250%22 y=%2258%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>OD</text></svg>'">
+                    <h4 class="contributor-name">Dino Ruglio</h4>
+                    <p class="contributor-bio">Founder and lead developer of CvalVino. Dino combines his passion for fine wines with technical expertise to create innovative wine recommendation systems. With a background in both viticulture and software engineering, he bridges the gap between traditional wine knowledge and modern technology.</p>
+                </div>
+
+                <div class="contributor-card">
+                    <img src="https://github.com/Meng-Jung.png" alt="Meng-Jung" class="contributor-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%23722F37%22></rect><text x=%2250%22 y=%2258%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>MJ</text></svg>'">
+                    <h4 class="contributor-name">Meng-Jung</h4>
+                    <p class="contributor-bio">AI specialist and data scientist focusing on flavor profile analysis and recommendation algorithms. Meng-Jung developed the sophisticated machine learning models that power CvalVino's wine pairing and recommendation engine, ensuring users receive personalized suggestions based on comprehensive wine attributes.</p>
+                </div>
+
+                <div class="contributor-card">
+                    <img src="https://github.com/gaziza-jnb.png" alt="gaziza-jnb" class="contributor-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%23722F37%22></rect><text x=%2250%22 y=%2258%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>GJ</text></svg>'">
+                    <h4 class="contributor-name">gaziza-jnb</h4>
+                    <p class="contributor-bio">UX/UI designer and front-end developer who crafted CvalVino's elegant user interface. With a keen eye for aesthetics and user experience, gaziza-jnb ensures that navigating the wine recommendation system is as delightful as enjoying the recommended wines themselves.</p>
+                </div>
+
+                <div class="contributor-card">
+                    <img src="https://github.com/ClaudiaK191.png" alt="Claudia Kettmann" class="contributor-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%23722F37%22></rect><text x=%2250%22 y=%2258%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22>CK</text></svg>'">
+                    <h4 class="contributor-name">Claudia Kettmann</h4>
+                    <p class="contributor-bio">Wine expert and sommelier who brings professional wine knowledge to the CvalVino team. With extensive experience in the wine industry and formal sommelier training, Claudia ensures that all recommendations are rooted in solid wine expertise, bridging traditional sommelier knowledge with modern technology.</p>
+                </div>
+            </div>
         </div>
     </div>
 
